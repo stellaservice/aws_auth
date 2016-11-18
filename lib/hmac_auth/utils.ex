@@ -1,4 +1,4 @@
-defmodule AWSAuth.Utils do
+defmodule HmacAuth.Utils do
   @moduledoc false
 
   def build_canonical_request(http_method, url, params, headers, hashed_payload) do
@@ -20,34 +20,31 @@ defmodule AWSAuth.Utils do
     "#{http_method}\n#{URI.encode(url) |> String.replace("$", "%24")}\n#{query_params}\n#{header_params}\n\n#{signed_header_params}\n#{hashed_payload}"
   end
 
-  def build_string_to_sign(canonical_request, timestamp, scope) do
-    hashed_canonical_request = hash_sha256(canonical_request)
-    "AWS4-HMAC-SHA256\n#{timestamp}\n#{scope}\n#{hashed_canonical_request}"
+  def build_string_to_sign(canonical_request, timestamp) do
+    hashed_canonical_request = hash_sha(canonical_request)
+    "#{timestamp}\n#{hashed_canonical_request}"
   end
 
-  def build_signing_key(secret_key, date, region, service) do
-    hmac_sha256("AWS4#{secret_key}", date)
-    |> hmac_sha256(region)
-    |> hmac_sha256(service)
-    |> hmac_sha256("aws4_request")
+  def build_signing_key(secret, date) do
+    hmac_sha(secret, date)
   end
 
   def build_signature(signing_key, string_to_sign) do
-    hmac_sha256(signing_key, string_to_sign)
+    hmac_sha(signing_key, string_to_sign)
     |> bytes_to_string
   end
 
-  def hash_sha256(data) do
-    :crypto.hash(:sha256, data)
+  def hash_sha(data) do
+    :crypto.hash(:sha, data)
     |> bytes_to_string
   end
 
-  def hmac_sha256(key, data) do
-    :crypto.hmac(:sha256, key, data)
+  def hmac_sha(key, data) do
+    :crypto.hmac(:sha, key, data)
   end
 
   def bytes_to_string(bytes) do
-    Base.encode16(bytes, case: :lower)
+    Base.encode64(bytes)
   end
 
   def format_time(time) do

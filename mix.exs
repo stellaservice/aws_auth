@@ -2,8 +2,8 @@ defmodule AWSAuth.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :aws_auth,
-     version: "0.6.1",
+    [app: :hmac_auth,
+     version: "0.1.0",
      elixir: "~> 1.3",
      description: description,
      package: package,
@@ -28,16 +28,16 @@ defmodule AWSAuth.Mixfile do
 
   defp description do
     """
-    AWS Signature Version 4 Signing Library
+    General HMAC SHA1 signature calculation based on aws_auth library
     """
   end
 
   defp package do
     [
      files: ["lib", "mix.exs", "README*"],
-     maintainers: ["Bryan Joseph"],
+     maintainers: ["Bryan Glusman"],
      licenses: ["Apache 2.0"],
-     links: %{"GitHub" => "https://github.com/bryanjos/aws_auth"}
+     links: %{"GitHub" => "https://github.com/stellaservice/hmac_auth"}
     ]
   end
 end
